@@ -2,63 +2,251 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sportify | Welcome</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sportify Web App</title>
   <style>
     body {
-      background: #f5f7fa;
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
       margin: 0;
     }
 
-    .home-container {
+    .container {
       background: white;
-      padding: 50px;
-      border-radius: 15px;
-      box-shadow: 0 15px 25px rgba(0,0,0,0.1);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 400px;
       text-align: center;
-      max-width: 500px;
+      display: none;
     }
 
-    .home-container h1 {
-      font-size: 40px;
-      color: #007bff;
-      margin-bottom: 10px;
+    .container.active {
+      display: block;
     }
 
-    .home-container p {
-      font-size: 18px;
-      color: #666;
-      margin-bottom: 30px;
+    h1 {
+      color: #0d47a1;
+      margin-bottom: 20px;
     }
 
-    .home-container a button {
-      margin: 10px;
-      padding: 12px 25px;
-      font-size: 16px;
-      border: none;
-      background-color: #007bff;
-      color: white;
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
       border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
     }
 
-    .home-container a button:hover {
-      background-color: #0056b3;
+    button {
+      background-color: #0d47a1;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background-color: #1565c0;
+    }
+
+    a {
+      color: #0d47a1;
+      text-decoration: none;
+      display: block;
+      margin-top: 15px;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div class="home-container">
-    <h1>Welcome to Sportify</h1>
-    <p>Track your lactate levels in real-time and stay ahead of injuries.</p>
-    <a href="login.php"><button>Login</button></a>
-    <a href="register.php"><button>Register</button></a>
+
+  <!-- Login Page -->
+  <div id="loginPage" class="container active">
+    <h1>sportify Login</h1>
+    <form onsubmit="event.preventDefault(); loginUser();">
+      <input type="email" id="loginEmail" placeholder="Email" required />
+      <input type="password" id="loginPassword" placeholder="Password" required />
+      <button type="submit">Login</button>
+    </form>
+    <a href="#" onclick="showRegister()">Don't have an account? Register</a>
   </div>
+
+  <!-- Register Page -->
+  <div id="registerPage" class="container">
+    <h1>Create Account</h1>
+    <form onsubmit="event.preventDefault(); registerUser();">
+      <input type="text" id="regName" placeholder="Name" required />
+      <input type="email" id="regEmail" placeholder="Email" required />
+      <input type="password" id="regPassword" placeholder="Password" required />
+      <button type="submit">Register</button>
+    </form>
+    <a href="#" onclick="showLogin()">Already have an account? Login</a>
+  </div>
+
+  <!-- Dashboard Page -->
+<div id="dashboardPage" class="container">
+  <div style="background: #0d47a1; color: white; padding: 10px 15px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;">
+    <span onclick="logout()" style="cursor:pointer;">←</span>
+    <h3 style="margin: 0;">users Monitoring</h3>
+    <span>🔔</span>
+  </div>
+
+  <div style="background: #eee; height: 150px; border-radius: 12px; margin: 20px 0; display: flex; justify-content: center; align-items: center;">
+    Graphical Data will appear here 📊
+  </div>
+
+  <button style="background-color: #1976d2; border: none; color: white; padding: 10px 20px; border-radius: 20px; margin-bottom: 20px;">
+    🔵 Connect to Device
+  </button>
+
+  <div id="players">
+    <!-- Player Items -->
+    <div class="player-card">user 1<br/><small>Lactate Level: 10 mmol/L</small><span class="status">✅</span></div>
+    <div class="player-card">user 2<br/><small>Lactate Level: 12 mmol/L</small><span class="status">✅</span></div>
+    <div class="player-card">user 3<br/><small>Lactate Level: 14 mmol/L</small><span class="status red">⚠️</span></div>
+    <div class="player-card">user 4<br/><small>Lactate Level: 16 mmol/L</small><span class="status red">⚠️</span></div>
+    <div class="player-card">user 5<br/><small>Lactate Level: 11 mmol/L</small><span class="status">✅</span></div>
+  </div>
+</div>
+
+<style>
+  .player-card {
+    background: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  .status {
+    font-size: 20px;
+  }
+
+  .status.red {
+    color: red;
+  }
+</style>
+
+
+  <script>
+
+function registerUser() {
+  const name = document.getElementById("regName").value;
+  const email = document.getElementById("regEmail").value;
+  const password = document.getElementById("regPassword").value;
+
+  fetch("register.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: `name=${name}&email=${email}&password=${password}`
+  })
+  .then(response => response.text())
+  .then(data => {
+    if (data === "success") {
+      alert("Registration successful 🎉");
+      showLogin();
+    } else {
+      alert("Registration failed ❌");
+    }
+  });
+}
+
+
+function loginUser() {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  fetch("login.php", {
+    method: "POST",
+    headers: {"Content-Type": "application/x-www-form-urlencoded"},
+    body: `email=${email}&password=${password}`
+  })
+  .then(response => response.text())
+  .then(data => {
+    if (data === "success") {
+      alert("Login successful ✅");
+      document.getElementById("loginPage").classList.remove("active");
+      document.getElementById("dashboardPage").classList.add("active");
+      loadPlayers();
+    } else {
+      alert("Login failed ❌");
+    }
+  });
+}
+
+
+function loadPlayers() {
+  fetch("get_players.php")
+    .then(response => response.json())
+    .then(players => {
+      const container = document.getElementById("players");
+      container.innerHTML = "";
+      players.forEach(player => {
+        const status = player.lactate_level > 13 ? "⚠️" : "✅";
+        const redClass = player.lactate_level > 13 ? "red" : "";
+        container.innerHTML += `
+          <div class="player-card">
+            ${player.name}<br/><small>Lactate Level: ${player.lactate_level} mmol/L</small>
+            <span class="status ${redClass}">${status}</span>
+          </div>`;
+      });
+    });
+}
+
+    
+    function showLogin() {
+      document.getElementById("loginPage").classList.add("active");
+      document.getElementById("registerPage").classList.remove("active");
+      document.getElementById("dashboardPage").classList.remove("active");
+    }
+
+    function showRegister() {
+      document.getElementById("registerPage").classList.add("active");
+      document.getElementById("loginPage").classList.remove("active");
+      document.getElementById("dashboardPage").classList.remove("active");
+    }
+
+    function loginUser() {
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      if (email && password) {
+        alert("Login successful ✅");
+        document.getElementById("loginPage").classList.remove("active");
+        document.getElementById("dashboardPage").classList.add("active");
+      }
+    }
+
+    function registerUser() {
+      const name = document.getElementById("regName").value;
+      const email = document.getElementById("regEmail").value;
+      const password = document.getElementById("regPassword").value;
+
+      if (name && email && password) {
+        alert("Registration successful 🎉");
+        showLogin();
+      }
+    }
+
+    function logout() {
+      alert("Logged out");
+      showLogin();
+    }
+  </script>
 </body>
 </html>
